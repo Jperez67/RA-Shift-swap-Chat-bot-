@@ -66,6 +66,13 @@ It will be a multi agent chat bot with 6 agents as listed below
   confirmation like:
    “Swap approved. April 12 duty changed from Joseph to Alex in Google Calendar and Excel schedule.”
 
+Google Sheets Tab set up
+  - MasterSchedule
+  - SwapRequests
+  - AuditLog
+  - Roster
+  - Config
+
 
 This will be relevant to Lab 2 for the google appscripts and google sheets, Lab 3 with the Chatbot, and finally Lab 4 with the multi agent chatbot
 
