@@ -161,3 +161,45 @@ function updateSwapRequestDecision_(requestSheet, requestHeaders, rowNumber, dec
   requestSheet.getRange(rowNumber, decisionCol).setValue(decision);
   requestSheet.getRange(rowNumber, decisionNoteCol).setValue(note);
 }
+
+function buildSwapRequestRow_(requestSheet, request) {
+  const headers = requestSheet
+    .getRange(1, 1, 1, requestSheet.getLastColumn())
+    .getValues()[0];
+
+  return headers.map(header => {
+    const cleanHeader = String(header).trim();
+
+    switch (cleanHeader) {
+      case CONFIG.HEADERS.REQUESTS.TIMESTAMP:
+        return new Date();
+
+      case CONFIG.HEADERS.REQUESTS.REQUESTED_BY:
+        return request.requestedBy || '';
+
+      case CONFIG.HEADERS.REQUESTS.SHIFT_DATE:
+        return request.shiftDate || '';
+
+      case CONFIG.HEADERS.REQUESTS.SHIFT_SLOT:
+        return request.shiftSlot || '';
+
+      case CONFIG.HEADERS.REQUESTS.ORIGINAL_RA:
+        return request.originalRA || '';
+
+      case CONFIG.HEADERS.REQUESTS.REPLACEMENT_RA:
+        return request.replacementRA || '';
+
+      case CONFIG.HEADERS.REQUESTS.REASON:
+        return request.reason || '';
+
+      case CONFIG.HEADERS.REQUESTS.DECISION:
+        return '';
+
+      case CONFIG.HEADERS.REQUESTS.DECISION_NOTE:
+        return '';
+
+      default:
+        return '';
+    }
+  });
+}

@@ -37,15 +37,7 @@ function isTruthy_(value) {
 function formatDateKey_(value) {
   if (!value) return '';
 
-  let dateObj = value;
-
-  if (!(dateObj instanceof Date)) {
-    dateObj = new Date(value);
-  }
-
-  if (isNaN(dateObj.getTime())) {
-    throw new Error(`Invalid date: ${value}`);
-  }
+  const dateObj = parseLocalDate_(value);
 
   return Utilities.formatDate(
     dateObj,
@@ -202,4 +194,36 @@ function appendAuditLog_(entry) {
   }
 });
   auditSheet.appendRow(row);
+}
+
+function parseLocalDate_(dateValue) {
+  if (dateValue instanceof Date) {
+    return new Date(
+      dateValue.getFullYear(),
+      dateValue.getMonth(),
+      dateValue.getDate()
+    );
+  }
+
+  const text = String(dateValue).trim();
+
+  const match = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (match) {
+    return new Date(
+      Number(match[1]),
+      Number(match[2]) - 1,
+      Number(match[3])
+    );
+  }
+
+  const parsed = new Date(text);
+  if (isNaN(parsed.getTime())) {
+    throw new Error(`Invalid date: ${dateValue}`);
+  }
+
+  return new Date(
+    parsed.getFullYear(),
+    parsed.getMonth(),
+    parsed.getDate()
+  );
 }
