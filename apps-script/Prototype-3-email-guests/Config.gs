@@ -11,6 +11,7 @@ const CONFIG = {
       DATE: 'Date',
       DAY: 'Day',
       SHIFT_TYPE: 'ShiftType',
+      SHIFT_SLOT: 'ShiftSlot',
       ORIGINAL_RA: 'OriginalRA',
       CURRENT_RA: 'CurrentRA',
       STATUS: 'Status',
@@ -21,9 +22,10 @@ const CONFIG = {
     REQUESTS: {
       TIMESTAMP: 'Timestamp',
       REQUESTED_BY: 'RequestedBy',
+      SHIFT_DATE: 'ShiftDate',
+      SHIFT_SLOT: 'ShiftSlot',
       ORIGINAL_RA: 'OriginalRA',
       REPLACEMENT_RA: 'ReplacementRA',
-      SHIFT_DATE: 'ShiftDate',
       REASON: 'Reason',
       DECISION: 'Decision',
       DECISION_NOTE: 'DecisionNote'
@@ -33,6 +35,7 @@ const CONFIG = {
       TIMESTAMP: 'Timestamp',
       ACTION: 'Action',
       SHIFT_DATE: 'ShiftDate',
+      SHIFT_SLOT: 'ShiftSlot',
       OLD_RA: 'OldRA',
       NEW_RA: 'NewRA',
       REQUESTED_BY: 'RequestedBy',
@@ -50,13 +53,11 @@ const CONFIG = {
 
   STATUS: {
     SWAPPED: 'Swapped',
-    PENDING: 'Pending',
     APPROVED: 'Approved',
     REJECTED: 'Rejected'
   },
 
   ACTIONS: {
-    SWAP_REQUEST: 'Swap Request',
     SWAP_COMPLETED: 'Swap Completed',
     SWAP_REJECTED: 'Swap Rejected'
   }

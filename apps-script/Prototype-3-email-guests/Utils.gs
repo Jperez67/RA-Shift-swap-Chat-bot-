@@ -54,7 +54,44 @@ function formatDateKey_(value) {
   );
 }
 
-function findRowByDate_(sheet, dateColumnName, targetDate) {
+function findRowByDateAndSlot_(sheet, dateColumnName, slotColumnName, targetDate, targetSlot) {
+  const headerMap = getHeaderMap_(sheet);
+  const dateCol = headerMap[dateColumnName];
+  const slotCol = headerMap[slotColumnName];
+
+  if (!dateCol) {
+    throw new Error(`Column not found: ${dateColumnName}`);
+  }
+  if (!slotCol) {
+    throw new Error(`Column not found: ${slotColumnName}`);
+  }
+
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) return -1;
+
+  const data = sheet.getRange(2, 1, lastRow - 1, sheet.getLastColumn()).getValues();
+  const targetDateKey = formatDateKey_(targetDate);
+  const targetSlotKey = normalizeName_(targetSlot);
+
+  for (let i = 0; i < data.length; i++) {
+    const row = data[i];
+    const rowDate = row[dateCol - 1];
+    const rowSlot = row[slotCol - 1];
+
+    if (!rowDate || !rowSlot) continue;
+
+    const rowDateKey = formatDateKey_(rowDate);
+    const rowSlotKey = normalizeName_(rowSlot);
+
+    if (rowDateKey === targetDateKey && rowSlotKey === targetSlotKey) {
+      return i + 2;
+    }
+  }
+
+  return -1;
+}
+
+/*function findRowByDate_(sheet, dateColumnName, targetDate) {
   const headerMap = getHeaderMap_(sheet);
   const dateCol = headerMap[dateColumnName];
 
@@ -80,6 +117,48 @@ function findRowByDate_(sheet, dateColumnName, targetDate) {
   }
 
   return -1;
+}*/
+
+function getShiftTypeFromDate_(dateValue) {
+  let dateObj = dateValue;
+
+  if (!(dateObj instanceof Date)) {
+    dateObj = new Date(dateValue);
+  }
+
+  if (isNaN(dateObj.getTime())) {
+    throw new Error(`Invalid date for shift type: ${dateValue}`);
+  }
+
+  const dayName = Utilities.formatDate(
+    dateObj,
+    Session.getScriptTimeZone(),
+    'EEEE'
+  );
+
+  if (dayName === 'Friday' || dayName === 'Saturday') {
+    return 'Weekend';
+  }
+
+  return 'Weekday';
+}
+
+function getDayNameFromDate_(dateValue) {
+  let dateObj = dateValue;
+
+  if (!(dateObj instanceof Date)) {
+    dateObj = new Date(dateValue);
+  }
+
+  if (isNaN(dateObj.getTime())) {
+    throw new Error(`Invalid date for day name: ${dateValue}`);
+  }
+
+  return Utilities.formatDate(
+    dateObj,
+    Session.getScriptTimeZone(),
+    'EEEE'
+  );
 }
 
 function appendAuditLog_(entry) {
@@ -90,35 +169,37 @@ function appendAuditLog_(entry) {
   const headers = auditSheet.getRange(1, 1, 1, auditSheet.getLastColumn()).getValues()[0];
 
   headers.forEach(header => {
-    switch (header) {
-      case CONFIG.HEADERS.AUDIT.TIMESTAMP:
-        row.push(new Date());
-        break;
-      case CONFIG.HEADERS.AUDIT.ACTION:
-        row.push(entry.action || '');
-        break;
-      case CONFIG.HEADERS.AUDIT.SHIFT_DATE:
-        row.push(entry.shiftDate || '');
-        break;
-      case CONFIG.HEADERS.AUDIT.OLD_RA:
-        row.push(entry.oldRA || '');
-        break;
-      case CONFIG.HEADERS.AUDIT.NEW_RA:
-        row.push(entry.newRA || '');
-        break;
-      case CONFIG.HEADERS.AUDIT.REQUESTED_BY:
-        row.push(entry.requestedBy || '');
-        break;
-      case CONFIG.HEADERS.AUDIT.RESULT:
-        row.push(entry.result || '');
-        break;
-      case CONFIG.HEADERS.AUDIT.NOTES:
-        row.push(entry.notes || '');
-        break;
-      default:
-        row.push('');
-    }
-  });
-
+  switch (header) {
+    case CONFIG.HEADERS.AUDIT.TIMESTAMP:
+      row.push(new Date());
+      break;
+    case CONFIG.HEADERS.AUDIT.ACTION:
+      row.push(entry.action || '');
+      break;
+    case CONFIG.HEADERS.AUDIT.SHIFT_DATE:
+      row.push(entry.shiftDate || '');
+      break;
+    case CONFIG.HEADERS.AUDIT.SHIFT_SLOT:
+      row.push(entry.shiftSlot || '');
+      break;
+    case CONFIG.HEADERS.AUDIT.OLD_RA:
+      row.push(entry.oldRA || '');
+      break;
+    case CONFIG.HEADERS.AUDIT.NEW_RA:
+      row.push(entry.newRA || '');
+      break;
+    case CONFIG.HEADERS.AUDIT.REQUESTED_BY:
+      row.push(entry.requestedBy || '');
+      break;
+    case CONFIG.HEADERS.AUDIT.RESULT:
+      row.push(entry.result || '');
+      break;
+    case CONFIG.HEADERS.AUDIT.NOTES:
+      row.push(entry.notes || '');
+      break;
+    default:
+      row.push('');
+  }
+});
   auditSheet.appendRow(row);
 }

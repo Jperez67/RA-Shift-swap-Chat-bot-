@@ -63,16 +63,18 @@ function validateSwapRequest_(request) {
   const masterSheet = getSheet_(CONFIG.SHEETS.MASTER);
   const masterHeaders = getHeaderMap_(masterSheet);
 
-  const rowNumber = findRowByDate_(
+  const rowNumber = findRowByDateAndSlot_(
     masterSheet,
     CONFIG.HEADERS.MASTER.DATE,
-    request.shiftDate
+    CONFIG.HEADERS.MASTER.SHIFT_SLOT,
+    request.shiftDate,
+    request.shiftSlot
   );
 
   if (rowNumber === -1) {
     return {
       valid: false,
-      message: `No shift found for date ${request.shiftDate}.`
+      message: `No shift found for date ${request.shiftDate} and slot ${request.shiftSlot}.`
     };
   }
 
@@ -81,8 +83,6 @@ function validateSwapRequest_(request) {
     .getValues()[0];
 
   const currentRA = rowValues[masterHeaders[CONFIG.HEADERS.MASTER.CURRENT_RA] - 1];
-  const originalRA = rowValues[masterHeaders[CONFIG.HEADERS.MASTER.ORIGINAL_RA] - 1];
-
   const currentRANormalized = normalizeName_(currentRA);
   const requestOriginalNormalized = normalizeName_(request.originalRA);
   const replacementNormalized = normalizeName_(request.replacementRA);
@@ -90,7 +90,7 @@ function validateSwapRequest_(request) {
   if (currentRANormalized !== requestOriginalNormalized) {
     return {
       valid: false,
-      message: `Original RA mismatch. Sheet shows "${currentRA}" for that shift.`
+      message: `Original RA mismatch. Sheet shows "${currentRA}" for ${request.shiftSlot} on that date.`
     };
   }
 
@@ -106,18 +106,9 @@ function validateSwapRequest_(request) {
     return replacementCheck;
   }
 
-  // Prevent replacement RA from already being assigned that same date
-  if (currentRANormalized === replacementNormalized) {
-    return {
-      valid: false,
-      message: `Replacement RA "${request.replacementRA}" is already assigned to this shift.`
-    };
-  }
-
   return {
     valid: true,
     rowNumber: rowNumber,
-    currentRA: currentRA,
-    originalRA: originalRA
+    currentRA: currentRA
   };
 }
