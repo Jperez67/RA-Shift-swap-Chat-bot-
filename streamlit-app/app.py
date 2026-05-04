@@ -31,7 +31,7 @@ def call_backend(payload: dict) -> dict:
             "to Streamlit secrets or your environment."
         )
 
-    response = requests.post(API_URL, json=payload, timeout=30)
+    response = requests.post(API_URL, json=payload, timeout=90)
     response.raise_for_status()
 
     data = response.json()
