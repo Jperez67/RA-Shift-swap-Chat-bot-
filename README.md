@@ -80,15 +80,15 @@ Streamlit UI
 - Google Sheets-based schedule
 - Automated swap processing
 - Validation + audit logging
-# Prototype 2 — Calendar Integration
+### Prototype 2 — Calendar Integration
 - Google Calendar event creation
 - Event updates on swaps
 - Calendar sync functions
-# Prototype 3 — Roster Integration
+### Prototype 3 — Roster Integration
 - RA roster with emails and eligibility
 - Assignment tracking
 - Preparation for notifications
-# Prototype 4 — AI + UI
+### Prototype 4 — AI + UI
 - Natural language AI assistant
 - Read-only schedule queries
 - Controlled swap execution (confirmation required)
