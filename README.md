@@ -76,7 +76,7 @@ Streamlit UI
 -  Google Calendar
 
 ## Prototypes
-# Prototype 1 — Core System
+### Prototype 1 — Core System
 - Google Sheets-based schedule
 - Automated swap processing
 - Validation + audit logging
